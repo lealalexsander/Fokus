@@ -66,3 +66,56 @@ function alterarContexto(contexto) {
     }    
     
 }
+
+const contagemRegressiva = () => {
+    if (tempoDecorridoEmSegundos <= 0) {
+        zerar();
+        alert('Tempo Finalizado!')
+        trocarBotao();
+        reiniciarTempo();
+        return
+    } 
+
+    tempoDecorridoEmSegundos -= 1;
+    console.log('Temporizador:' + tempoDecorridoEmSegundos);
+
+    if (tempoDecorridoEmSegundos <= 5) {
+        somFinalizando.play();
+    }
+
+}
+
+startPause.addEventListener('click', iniciarPausar);
+
+function iniciarPausar() {
+    trocarBotao();
+    if (intervaloId) {
+        zerar();
+        return;
+    }
+    intervaloId = setInterval(contagemRegressiva, 1000);
+}
+
+function zerar() {
+    clearInterval(intervaloId);
+    intervaloId = null;
+}
+
+function reiniciarTempo() {
+    tempoDecorridoEmSegundos = tempoFoco;
+}
+
+function trocarBotao() {
+    switch (startPauseText.innerHTML) {
+        case "Começar":
+            startPauseText.innerHTML = `Pausar`;
+            somPlay.play();
+            break;
+        case "Pausar":
+            startPauseText.innerHTML = `Começar`;
+            somPause.play();
+            break;
+        default:
+            break;
+    }
+}
