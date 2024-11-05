@@ -11,8 +11,8 @@ var startPauseText = document.getElementById("button-startPause");
 var imagemBt = document.getElementById("button-img");
 const tempoNaTela = document.getElementById("timer");
 
+const audioPlayer = document.getElementById('audio-player');
 const musicaFocoInput = document.querySelector('#alternar-musica');
-const musica = new Audio('/sons/luna-rise-part-one.mp3');
 const somPlay = new Audio('/sons/play.wav');
 const somPause = new Audio('/sons/pause.mp3');
 const somFinalizando = new Audio('/sons/beep.mp3');
@@ -21,14 +21,19 @@ var tempoFoco = 1500;
 let tempoDecorridoEmSegundos = tempoFoco;
 let intervaloId = null;
 
-musica.loop = true;
+
 musicaFocoInput.addEventListener('change', () => {
-    if (musica.paused) {
-        musica.play();
+    if (audioPlayer.paused) {
+        audioPlayer.play();
+        audioPlayer.classList.remove('player-desactive');
+        audioPlayer.classList.add('player-active');
+        audioPlayer.loop = true;
     } else {
-        musica.pause();
+        audioPlayer.pause();
+        audioPlayer.classList.add('player-desactive');
+        audioPlayer.classList.remove('player-active');
     }
-})
+});
 
 stopTime.addEventListener('click', () => {
     tempoDecorridoEmSegundos = 0;

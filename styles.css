@@ -150,6 +150,42 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: center;
 }
 
+.player {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2em;
+}
+
+.player-desactive {
+    opacity: 0.05;
+    pointer-events: none; 
+}
+
+#audio-player {
+    width: 80%; /* Ajusta a largura */
+    background: var(--linear-botes);/* Altera a cor de fundo */
+    border-radius: 100px; /* Adiciona bordas arredondadas */
+    outline: none; /* Remove o contorno padrão */
+    border: solid rgb(255, 255, 255) 1px;
+  }
+  
+  .player-active::-webkit-media-controls-panel {
+    background: var(--linear-botes); /* Cor de fundo do painel de controles no Chrome */
+    border-radius: 0px;
+  }
+  
+  .player-active::-webkit-media-controls-play-button,
+  .player-active::-webkit-media-controls-time-remaining-display,
+  .player-active::-webkit-media-controls-current-time-display,
+  .player-active::-webkit-media-controls-mute-button,
+  .player-active::-webkit-media-controls-volume-slider,
+  .player-active::-webkit-media-controls-seek-back-button,
+  .player-active::-webkit-media-controls-seek-forward-button {
+    filter: invert(1); /* Altera a cor dos botões */
+  }
+  
+
 .app__card-primary-button {
     padding: 0.8rem;
     width: 12rem;
@@ -214,7 +250,7 @@ h1, h2, h3, h4, h5, h6 {
     height: 3.2rem;
     position: relative;
     vertical-align: middle;
-    transition: background 0.25s;
+    transition: 0.25s;
 }
 
 .toggle-switch:before, .toggle-switch:after {
