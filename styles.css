@@ -95,6 +95,15 @@ h1, h2, h3, h4, h5, h6 {
     gap: 1.6rem;
 }
 
+.buttons {
+    display: flex;
+    gap: 2em;
+}
+
+.stop-time {
+    width: 40px;
+}
+
 .app__card-button {
     font-family: Montserrat;
     font-size: 1.8rem;
@@ -150,6 +159,20 @@ h1, h2, h3, h4, h5, h6 {
     outline: inherit;
     border-radius: 3.2rem;
     background: var(--linear-botes);
+    margin-top: 3.2rem;
+    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.button-stop {
+    border: none;
+    cursor: pointer;
+    outline: inherit;
+    border-radius: 3.2rem;
+    background: none;
     margin-top: 3.2rem;
     font-size: 1.8rem;
     display: flex;
