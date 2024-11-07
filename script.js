@@ -10,20 +10,33 @@ const startPause = document.querySelector('#start-pause');
 var startPauseText = document.getElementById("button-startPause");
 var imagemBt = document.getElementById("button-img");
 const tempoNaTela = document.getElementById("timer");
+const buttonCadeado = document.getElementById("cadeado");
+var cadeado = "fechado";
 
 const audioPlayer = document.getElementById('audio-player');
 const musicaFocoInput = document.querySelector('#alternar-musica');
 const somPlay = new Audio('/sons/play.wav');
 const somPause = new Audio('/sons/pause.mp3');
-const somFinalizando = new Audio('/sons/beep.mp3');
+const somFinalizando = new Audio('/sons/alerta.mp3');
 
 var tempoFoco = 1500;
 let tempoDecorridoEmSegundos = tempoFoco;
 let intervaloId = null;
 
+buttonCadeado.addEventListener('click', () => {
+    const img = buttonCadeado.querySelector("img");
+    
+    if (img.src.includes("cadeado-fechado.png")) {
+        img.src = "./imagens/cadeado-aberto.png";
+        cadeado = "aberto";
+    } else {
+        img.src = "./imagens/cadeado-fechado.png";
+        cadeado = "fechado";
+    }
+})
 
 musicaFocoInput.addEventListener('change', () => {
-    if (audioPlayer.paused) {
+    if (audioPlayer.classList == 'player-desactive') {
         audioPlayer.play();
         audioPlayer.classList.remove('player-desactive');
         audioPlayer.classList.add('player-active');
@@ -40,35 +53,36 @@ stopTime.addEventListener('click', () => {
     temporizador();
 })
 
+
 focoBt.addEventListener('click', () => {
-    if (tempoDecorridoEmSegundos == 0) {
+    if (tempoDecorridoEmSegundos == 0 || cadeado == "aberto") {
         tempoDecorridoEmSegundos = 1500;
         alterarContexto('foco');
         focoBt.classList.add('active');
     } else {
-        alert("Você só pode alterar o modo,\nquando o temporizador estiver Zerado!")
+        alert("É necessário zerar o tempo para mudar de período!\nOu desbloquei apertando no cadeado 🔒");
     }
     
 })
 
 curtoBt.addEventListener('click', () => {
-    if (tempoDecorridoEmSegundos == 0) {
+    if (tempoDecorridoEmSegundos == 0 || cadeado == "aberto") {
         tempoDecorridoEmSegundos = 300;
         alterarContexto('descanso-curto');
         curtoBt.classList.add('active');
     } else {
-        alert("Você só pode alterar o modo,\nquando o temporizador estiver Zerado!")
+        alert("É necessário zerar o tempo para mudar de período!\nOu desbloquei apertando no cadeado 🔒");
     }
 })
 
 
 longoBt.addEventListener('click', () => {
-    if (tempoDecorridoEmSegundos == 0) {
+    if (tempoDecorridoEmSegundos == 0 || cadeado == "aberto") {
         tempoDecorridoEmSegundos = 900;
         alterarContexto('descanso-longo');
         longoBt.classList.add('active');
     } else {
-        alert("Você só pode alterar o modo,\nquando o temporizador estiver Zerado!")
+        alert("É necessário zerar o tempo para mudar de período!\nOu desbloquei apertando no cadeado 🔒");
     }
 })
 
@@ -84,7 +98,7 @@ function alterarContexto(contexto) {
     switch (contexto) {
         case "foco":
             titulo.innerHTML = `Otimize sua produtividade,<br>
-                <strong class="app__title-strong">mergulhe no que importa.</strong>`
+                <strong class="app__title-strong">mergulhe no que importa.</strong>`;
             break;
         case "descanso-curto":
             titulo.innerHTML = `Que tal dar uma respirada?<br><strong class="app__title-strong">Faça uma Pausa Curta!</strong>`;
@@ -98,13 +112,13 @@ function alterarContexto(contexto) {
 }
 
 const contagemRegressiva = () => {
-    if (tempoDecorridoEmSegundos <= 0) {
+    if (tempoDecorridoEmSegundos == 0) {
+        mudarTempo();
         zerar();
-        alert('Tempo Finalizado!')
+        iniciarPausar();
         trocarBotao();
-        reiniciarTempo();
         temporizador();
-        return
+        return;
     } 
 
     tempoDecorridoEmSegundos -= 1;
@@ -130,11 +144,10 @@ function iniciarPausar() {
 function zerar() {
     clearInterval(intervaloId);
     intervaloId = null;
-}
-
-function reiniciarTempo() {
+    somFinalizando.pause();
     tempoDecorridoEmSegundos = tempoFoco;
 }
+
 
 function trocarBotao() {
     switch (startPauseText.innerHTML) {
@@ -158,5 +171,22 @@ function temporizador() {
     const tempoFormatado = tempo.toLocaleString('pt-Br', {minute: '2-digit', second: '2-digit'});
     tempoNaTela.innerHTML = `${tempoFormatado}`;
 }
+
+function mudarTempo() {
+    if (html.getAttribute('data-contexto') === "foco") {
+        alterarContexto('descanso-curto');
+        curtoBt.classList.add('active');
+        tempoFoco = 300;
+    } else if (html.getAttribute('data-contexto') === "descanso-curto") { 
+        alterarContexto('descanso-longo');
+        longoBt.classList.add('active');
+        tempoFoco = 900;
+    } else if (html.getAttribute('data-contexto') === "descanso-longo") {
+        alterarContexto('foco');
+        focoBt.classList.add('active'); 
+        tempoFoco = 1500;  
+    }
+}
+
 
 temporizador();
