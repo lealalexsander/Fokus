@@ -5,6 +5,7 @@ const longoBt = document.querySelector('.app__card-button--longo');
 const banner = document.querySelector('.app__image');
 const titulo = document.querySelector('.app__title');
 const botoes = document.querySelectorAll('.app__card-button');
+const timerElement = document.querySelector('.app__card-timer');
 const stopTime = document.getElementById('stop-time');
 const startPause = document.querySelector('#start-pause');
 var startPauseText = document.getElementById("button-startPause");
@@ -19,7 +20,9 @@ const somPlay = new Audio('/sons/play.wav');
 const somPause = new Audio('/sons/pause.mp3');
 const somFinalizando = new Audio('/sons/alerta.mp3');
 
-var tempoFoco = 1500;
+
+var novoTempo = 1500;
+var tempoFoco = novoTempo;
 let tempoDecorridoEmSegundos = tempoFoco;
 let intervaloId = null;
 
@@ -56,7 +59,7 @@ stopTime.addEventListener('click', () => {
 
 focoBt.addEventListener('click', () => {
     if (tempoDecorridoEmSegundos == 0 || cadeado == "aberto") {
-        tempoDecorridoEmSegundos = 1500;
+        tempoDecorridoEmSegundos = novoTempo;
         alterarContexto('foco');
         focoBt.classList.add('active');
     } else {
@@ -168,8 +171,7 @@ function trocarBotao() {
 
 function temporizador() {
     const tempo = new Date(tempoDecorridoEmSegundos * 1000);
-    const tempoFormatado = tempo.toLocaleString('pt-Br', {minute: '2-digit', second: '2-digit'});
-    tempoNaTela.innerHTML = `${tempoFormatado}`;
+    tempoNaTela.innerHTML = formatarTempo(tempoDecorridoEmSegundos);
 }
 
 function mudarTempo() {
@@ -184,9 +186,87 @@ function mudarTempo() {
     } else if (html.getAttribute('data-contexto') === "descanso-longo") {
         alterarContexto('foco');
         focoBt.classList.add('active'); 
-        tempoFoco = 1500;  
+        tempoFoco = novoTempo;  
     }
 }
+
+var letraTempo = "12rem";
+
+function ajustarFonte() {
+    const horas = Math.floor(tempoDecorridoEmSegundos / 3600);
+    letraTempo = window.innerWidth <= 767 ? "6rem" : "12rem";
+
+    timerElement.style.fontSize = horas > 0 ? "9rem" : letraTempo;
+    timerElement.style.textAlign = horas > 0 ? "center" : "center";
+    timerElement.style.marginRight = "5rem";
+}
+
+window.addEventListener('resize', ajustarFonte);
+
+
+
+tempoNaTela.addEventListener('click', () => {
+    function usuarioTempo() {
+        if (cadeado === "aberto") {
+            const input = document.createElement("input");
+            input.type = "text";
+            input.value = formatarTempo(tempoDecorridoEmSegundos);
+
+            input.style.backgroundColor = "transparent";
+            input.style.color = "white";
+            input.style.fontFamily = "Unbounded";
+            input.style.fontWeight = "700";
+            input.style.fontSize = letraTempo; 
+            input.style.textAlign = "center"; 
+            input.style.border = "none"; 
+            input.style.outline = "none";
+        
+            tempoNaTela.innerHTML = "";
+            tempoNaTela.appendChild(input);
+            input.focus();
+
+            input.addEventListener("blur", atualizarTempo);
+            input.addEventListener("keydown", (event) => {
+                if (event.key === "Enter") {
+                    atualizarTempo();
+                }
+            });
+
+            function atualizarTempo() {
+                const valor = input.value;
+                const [minutos, segundos] = valor.split(":").map(Number); 
+
+                if (!isNaN(minutos) && !isNaN(segundos) && segundos >= 0 && segundos < 60) {
+                    tempoDecorridoEmSegundos = minutos * 60 + segundos;
+                }
+                temporizador(); 
+
+                tempoNaTela.removeChild(input);
+
+
+                novoTempo = input.value; 
+            }
+
+        } else {
+            alert("Desbloqueie o cadeado para alterar o tempo.");
+        }
+    }
+});
+
+
+function formatarTempo(tempoEmSegundos) {
+    const horas = Math.floor(tempoEmSegundos / 3600);
+    const minutos = Math.floor((tempoEmSegundos % 3600) / 60);
+    const segundos = tempoEmSegundos % 60;
+    
+    const horasFormatadas = horas > 0 ? String(horas).padStart(2, "0") + ":" : "";
+    const minutosFormatados = String(minutos).padStart(2, "0");
+    const segundosFormatados = String(segundos).padStart(2, "0");
+
+    return `${horasFormatadas}${minutosFormatados}:${segundosFormatados}`;
+}
+
+
 
 
 temporizador();
