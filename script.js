@@ -20,9 +20,9 @@ const somPlay = new Audio('/sons/play.wav');
 const somPause = new Audio('/sons/pause.mp3');
 const somFinalizando = new Audio('/sons/alerta.mp3');
 
-
-var novoTempo = 1500;
-var tempoFoco = novoTempo;
+var tempoDescansoCurto = 300;
+var tempoDescansoLongo = 900;
+var tempoFoco = 1500;
 let tempoDecorridoEmSegundos = tempoFoco;
 let intervaloId = null;
 
@@ -59,7 +59,7 @@ stopTime.addEventListener('click', () => {
 
 focoBt.addEventListener('click', () => {
     if (tempoDecorridoEmSegundos == 0 || cadeado == "aberto") {
-        tempoDecorridoEmSegundos = novoTempo;
+        tempoDecorridoEmSegundos = tempoFoco;
         alterarContexto('foco');
         focoBt.classList.add('active');
     } else {
@@ -70,7 +70,7 @@ focoBt.addEventListener('click', () => {
 
 curtoBt.addEventListener('click', () => {
     if (tempoDecorridoEmSegundos == 0 || cadeado == "aberto") {
-        tempoDecorridoEmSegundos = 300;
+        tempoDecorridoEmSegundos = tempoDescansoCurto;
         alterarContexto('descanso-curto');
         curtoBt.classList.add('active');
     } else {
@@ -81,7 +81,7 @@ curtoBt.addEventListener('click', () => {
 
 longoBt.addEventListener('click', () => {
     if (tempoDecorridoEmSegundos == 0 || cadeado == "aberto") {
-        tempoDecorridoEmSegundos = 900;
+        tempoDecorridoEmSegundos = tempoDescansoLongo;
         alterarContexto('descanso-longo');
         longoBt.classList.add('active');
     } else {
@@ -108,6 +108,7 @@ function alterarContexto(contexto) {
             break;
         case "descanso-longo":
             titulo.innerHTML = `Hora de voltar à superfície<br><strong class="app__title-strong">Faça uma Pausa Longa!</strong>`;
+            break;
         default:
             break;
     }    
@@ -148,7 +149,15 @@ function zerar() {
     clearInterval(intervaloId);
     intervaloId = null;
     somFinalizando.pause();
-    tempoDecorridoEmSegundos = tempoFoco;
+    
+    if (html.getAttribute('data-contexto') === "foco") {
+        tempoDecorridoEmSegundos = tempoFoco;
+    } else if (html.getAttribute('data-contexto') === "descanso-curto") { 
+        tempoDecorridoEmSegundos = tempoDescansoCurto;
+    } else if (html.getAttribute('data-contexto') === "descanso-longo") {
+        tempoDecorridoEmSegundos = tempoDescansoLongo;
+    } 
+    
 }
 
 
@@ -178,15 +187,15 @@ function mudarTempo() {
     if (html.getAttribute('data-contexto') === "foco") {
         alterarContexto('descanso-curto');
         curtoBt.classList.add('active');
-        tempoFoco = 300;
+        tempoDescansoCurto = 300;
     } else if (html.getAttribute('data-contexto') === "descanso-curto") { 
         alterarContexto('descanso-longo');
         longoBt.classList.add('active');
-        tempoFoco = 900;
+        tempoDescansoLongo = 900;
     } else if (html.getAttribute('data-contexto') === "descanso-longo") {
         alterarContexto('foco');
         focoBt.classList.add('active'); 
-        tempoFoco = novoTempo;  
+        tempoFoco;  
     }
 }
 
@@ -206,51 +215,47 @@ window.addEventListener('resize', ajustarFonte);
 
 
 tempoNaTela.addEventListener('click', () => {
-    function usuarioTempo() {
-        if (cadeado === "aberto") {
-            const input = document.createElement("input");
-            input.type = "text";
-            input.value = formatarTempo(tempoDecorridoEmSegundos);
+    if (cadeado === "aberto") {
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = formatarTempo(tempoDecorridoEmSegundos);
 
-            input.style.backgroundColor = "transparent";
-            input.style.color = "white";
-            input.style.fontFamily = "Unbounded";
-            input.style.fontWeight = "700";
-            input.style.fontSize = letraTempo; 
-            input.style.textAlign = "center"; 
-            input.style.border = "none"; 
-            input.style.outline = "none";
-        
-            tempoNaTela.innerHTML = "";
-            tempoNaTela.appendChild(input);
-            input.focus();
+        input.style.backgroundColor = "transparent";
+        input.style.color = "white";
+        input.style.fontFamily = "Unbounded";
+        input.style.fontWeight = "700";
+        input.style.fontSize = letraTempo; 
+        input.style.textAlign = "center"; 
+        input.style.border = "none"; 
+        input.style.outline = "none";
+    
+        tempoNaTela.innerHTML = "";
+        tempoNaTela.appendChild(input);
+        input.focus();
 
-            input.addEventListener("blur", atualizarTempo);
-            input.addEventListener("keydown", (event) => {
-                if (event.key === "Enter") {
-                    atualizarTempo();
-                }
-            });
-
-            function atualizarTempo() {
-                const valor = input.value;
-                const [minutos, segundos] = valor.split(":").map(Number); 
-
-                if (!isNaN(minutos) && !isNaN(segundos) && segundos >= 0 && segundos < 60) {
-                    tempoDecorridoEmSegundos = minutos * 60 + segundos;
-                }
-                temporizador(); 
-
-                tempoNaTela.removeChild(input);
-
-
-                novoTempo = input.value; 
+        input.addEventListener("blur", atualizarTempo);
+        input.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                atualizarTempo();
             }
+        });
 
-        } else {
-            alert("Desbloqueie o cadeado para alterar o tempo.");
+        function atualizarTempo() {
+            const valor = input.value;
+            const [minutos, segundos] = valor.split(":").map(Number); 
+
+            if (!isNaN(minutos) && !isNaN(segundos) && segundos >= 0 && segundos < 60) {
+                tempoDecorridoEmSegundos = minutos * 60 + segundos;
+                tempoFoco = tempoDecorridoEmSegundos;
+            }
+            temporizador(); 
+            tempoNaTela.removeChild(input);
         }
+        
+    } else {
+        alert("Desbloqueie o cadeado para alterar o tempo.");
     }
+
 });
 
 
