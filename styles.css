@@ -191,6 +191,55 @@ h1, h2, h3, h4, h5, h6 {
   }
   
 
+.music-player {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.music-menu-header {
+    cursor: pointer;
+    display: inline-block;
+}
+
+.music_seta {
+    width: 2em;
+}
+
+/* Menu oculto por padrão */
+.music-menu {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background-color: var(--lils);
+    padding: 10px;
+    border-radius: 5px;
+    position: absolute;
+}
+
+/* Exibe o menu quando está ativo */
+.music-menu.active {
+    display: flex;
+}
+
+/* Estilo das opções de música */
+.music-option {
+    cursor: pointer;
+    padding: 8px 12px;
+    background-color: none;
+    border: none;
+    border-radius: 4px;
+    background: none;
+    color: white;
+    font-size: 1.5em;
+    font-family: Unbounded;
+}
+
+.music-option:hover {
+    background-color: #ddd;
+}
+
+
 .app__card-primary-button {
     padding: 0.8rem;
     width: 12rem;

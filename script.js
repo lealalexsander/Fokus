@@ -161,17 +161,41 @@ function zerar() {
 }
 
 
+const musicMenuHeader = document.getElementById('music-menu-header');
+const musicMenu = document.getElementById('music-menu');
+const musicOptions = document.querySelectorAll('.music-option');
+
+// Abre e fecha o menu de músicas ao clicar no cabeçalho
+musicMenuHeader.addEventListener('click', () => {
+    musicMenu.classList.toggle('active');
+});
+
+// Define a música no player ao clicar em uma opção
+musicOptions.forEach(option => {
+    option.addEventListener('click', () => {
+        const musicSrc = option.getAttribute('data-src'); // Pega o caminho da música
+        audioPlayer.src = musicSrc; // Define a música no player
+        audioPlayer.play(); // Toca a música
+
+        musicMenu.classList.remove('active'); // Fecha o menu
+    });
+});
+
 function trocarBotao() {
     switch (startPauseText.innerHTML) {
         case "Começar":
             startPauseText.innerHTML = `Pausar`;
             imagemBt.setAttribute('src', `/imagens/pause.png`);
             somPlay.play();
+            if (audioPlayer.classList == 'player-active') {
+                audioPlayer.play();
+            }
             break;
         case "Pausar":
             startPauseText.innerHTML = `Começar`;
             imagemBt.setAttribute('src', `/imagens/play_arrow.png`);
             somPause.play();
+            audioPlayer.pause();
             break;
         default:
             break;
@@ -187,11 +211,11 @@ function mudarTempo() {
     if (html.getAttribute('data-contexto') === "foco") {
         alterarContexto('descanso-curto');
         curtoBt.classList.add('active');
-        tempoDescansoCurto = 300;
+        tempoDescansoCurto;
     } else if (html.getAttribute('data-contexto') === "descanso-curto") { 
         alterarContexto('descanso-longo');
         longoBt.classList.add('active');
-        tempoDescansoLongo = 900;
+        tempoDescansoLongo;
     } else if (html.getAttribute('data-contexto') === "descanso-longo") {
         alterarContexto('foco');
         focoBt.classList.add('active'); 
@@ -246,7 +270,14 @@ tempoNaTela.addEventListener('click', () => {
 
             if (!isNaN(minutos) && !isNaN(segundos) && segundos >= 0 && segundos < 60) {
                 tempoDecorridoEmSegundos = minutos * 60 + segundos;
-                tempoFoco = tempoDecorridoEmSegundos;
+                if (html.getAttribute('data-contexto') === "foco") {
+                    tempoFoco = tempoDecorridoEmSegundos;
+                } else if (html.getAttribute('data-contexto') === "descanso-curto") { 
+                    tempoDescansoCurto = tempoDecorridoEmSegundos;
+                } else if (html.getAttribute('data-contexto') === "descanso-longo") {
+                    tempoDescansoLongo = tempoDecorridoEmSegundos;  
+                }                
+                
             }
             temporizador(); 
             tempoNaTela.removeChild(input);

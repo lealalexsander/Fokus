@@ -63,13 +63,25 @@
                             Música
                         </label>
                     </li>
-                </ul>
+                    <li class="music-player">
+                        <div class="music-menu-header" id="music-menu-header">
+                            <img class="music_seta" src="./imagens/seta.png" alt="">    
+                        </div>
+                    
+                        <!-- Lista de músicas que será exibida ao clicar no ícone -->
+                        <div class="music-menu" id="music-menu">
+                            <button class="music-option">X</button>
+                            <button class="music-option" data-src="sons/pw-musica.mp3">Perfect World</button>
+                            <button class="music-option" data-src="sons/gc-musica.mp3">Grand Chase</button>
+                        </div>                    
+                    </li>
+                </ul>          
                 <div class="player" id="player">
                     <audio class="player-desactive" id="audio-player" controls>
                         <source src="sons/pw-musica.mp3" type="audio/mpeg">
                         Seu navegador não suporta o elemento de áudio.
                       </audio>
-                </div>
+                </div>  
                 <div class="buttons app__card-primary-button-wrapper">
                     <button id="start-pause" class="app__card-primary-button">
                         <img id="button-img" class="app__card-primary-butto-icon" src="/imagens/play_arrow.png" alt="">
